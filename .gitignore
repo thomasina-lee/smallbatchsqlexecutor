@@ -1,14 +1,14 @@
 .project
 .classpath
 .settings/
-ignore/
-lib/
+/ignore/
+/lib/
 # ignore all bin directories
 # matches "bin" in any subfolder
-bin/
-
+/bin/
+/dependency-reduced-pom.xml
 # ignore all target directories
-target/
+/target/
 
 # ignore all files ending with ~
 *~ 

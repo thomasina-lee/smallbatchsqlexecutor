@@ -10,7 +10,7 @@ import java.sql.SQLException;
 import com.probthink.sqlexecutor.IResultSetProcess;
 
 
-public class CsvRecordSetProcessor implements IResultSetProcess {
+public class DelimitedRecordSetProcessor implements IResultSetProcess {
 
 	@Override
 	public void preProcess() throws IOException {

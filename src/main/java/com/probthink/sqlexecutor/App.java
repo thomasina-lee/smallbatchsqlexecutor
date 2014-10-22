@@ -11,31 +11,26 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
+import org.yaml.snakeyaml.TypeDescription;
 import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.Constructor;
 
 
-
-import com.probthink.sqlexecutor.CsvRecordSetProcessor;
+import com.probthink.sqlexecutor.DelimitedRecordSetProcessor;
 import com.probthink.sqlexecutor.DbDriver;
 import com.probthink.sqlexecutor.LoopQueryExecutor;
 import com.probthink.sqlexecutor.SimpleIntRangeQueryIterator;
-import com.probthink.sqlexecutor.SmallBatchSqlExecutor;
+import com.probthink.sqlexecutor.App;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.json.JettisonMappedXmlDriver;
-import com.thoughtworks.xstream.io.json.JsonHierarchicalStreamDriver;
 import com.thoughtworks.xstream.io.xml.StaxDriver;
 
+public class App {
 
-
-
-public class SmallBatchSqlExecutor {
-
-
-
-	
-	private static SmallBatchSqlExecutor loadXMLConfig() throws FileNotFoundException{
-		XStream xs ;
-		switch (inputType){
+	private static App loadXMLConfig()
+			throws FileNotFoundException {
+		XStream xs;
+		switch (inputType) {
 		case 1:
 			xs = new XStream(new StaxDriver());
 			break;
@@ -43,44 +38,59 @@ public class SmallBatchSqlExecutor {
 			xs = new XStream(new JettisonMappedXmlDriver());
 			break;
 		}
-		
 
-		xs.alias("main", SmallBatchSqlExecutor.class);
-		xs.alias("connection", LoopQueryExecutor.class);
-		xs.alias("csv", CsvRecordSetProcessor.class);
-		xs.alias("intsql", SimpleIntRangeQueryIterator.class);
+		xs.alias("app", App.class);
+		xs.alias("iterating_executor", LoopQueryExecutor.class);
+		xs.alias("delimited_processor", DelimitedRecordSetProcessor.class);
+		xs.alias("int_iterator", SimpleIntRangeQueryIterator.class);
+		xs.alias("date_iterator", SimpleIntRangeQueryIterator.class);
 		xs.alias("driver", DbDriver.class);
-		SmallBatchSqlExecutor br = (SmallBatchSqlExecutor) xs
+		App br = (App) xs
 				.fromXML(new FileInputStream(filename));
 		return br;
 	}
+
 	
 	
-	private static SmallBatchSqlExecutor loadYamlConfig() throws FileNotFoundException{
-		Yaml yaml = new Yaml() ;
+	private static App loadYamlConfig()
+			throws FileNotFoundException {
 		
-		SmallBatchSqlExecutor br = (SmallBatchSqlExecutor) yaml.load(new FileInputStream(filename));
+		Constructor constructor = new Constructor(App.class);//Car.class is root
+
+		constructor.addTypeDescription(new TypeDescription(App.class, "!app"));
+		constructor.addTypeDescription(new TypeDescription(LoopQueryExecutor.class, "!iterating_executor"));
+		constructor.addTypeDescription(new TypeDescription(SimpleIntRangeQueryIterator.class, "!int_iterator"));
+		constructor.addTypeDescription(new TypeDescription(SimpleDateRangeQueryIterator.class, "!date_iterator"));
+		constructor.addTypeDescription(new TypeDescription(NoLoopQueryExecutor.class, "!simple_executor"));
 		
+		
+		constructor.addTypeDescription(new TypeDescription(DelimitedRecordSetProcessor.class, "!delimited_processor"));
+		
+		
+		Yaml yaml = new Yaml(constructor);
+		
+		
+
+		App br = (App) yaml
+				.load(new FileInputStream(filename));
+
 		return br;
 	}
-	
-	private static void run(SmallBatchSqlExecutor br) throws Exception {
-		
+
+	private static void run(App br) throws Exception {
+
 		br.getDbDriver().loadDriver();
 		System.out.println(br.getExecutor().getSQL());
-		
+
 		long start = System.currentTimeMillis();
 		br.getExecutor().run();
 		System.out.println("RunTime: " + (System.currentTimeMillis() - start)
 				+ " millisecs");
-		
-		//XStream xstream = new XStream(new JsonHierarchicalStreamDriver());
-		//System.out.print(xstream.toXML(br));
 
-		
+		// XStream xstream = new XStream(new JsonHierarchicalStreamDriver());
+		// System.out.print(xstream.toXML(br));
+
 	}
-	
-
 
 	private static void printUsageAndExit(Options options) {
 		HelpFormatter formatter = new HelpFormatter();
@@ -88,25 +98,21 @@ public class SmallBatchSqlExecutor {
 		Runtime.getRuntime().exit(-1);
 	}
 
-	private static void parseCommandLine(String[] args)	 {
+	private static void parseCommandLine(String[] args) {
 
-		//String filename = "";
+		// String filename = "";
 		CommandLineParser parser = new PosixParser();
 		Options options = new Options();
 		options.addOption("h", "help", false, "print this message.");
 		options.addOption("x", "xml-file", true,
 				"set the xml config file to use");
-		options.addOption("j", "json-file", true,
-				"set the json config file to use");
 		options.addOption("y", "yaml-file", true,
-		"set the yaml config file to use");
+				"set the yaml config file to use");
 
-		
-		
 		CommandLine cmdline;
 		try {
 			cmdline = parser.parse(options, args);
-			
+
 			if (cmdline.hasOption("h")) {
 				printUsageAndExit(options);
 			}
@@ -114,43 +120,37 @@ public class SmallBatchSqlExecutor {
 			if (cmdline.hasOption("x")) {
 				filename = cmdline.getOptionValue("xml-file");
 				inputType = 0;
-			} else if (cmdline.hasOption("j")) {
-				filename = cmdline.getOptionValue("json-file");
-				inputType = 1;
-			} else if (cmdline.hasOption("y")) {
+			} 
+			else if (cmdline.hasOption("y")) {
 				filename = cmdline.getOptionValue("yaml-file");
-				inputType = 2;
+				inputType = 1;
 			} else {
 				printUsageAndExit(options);
 			}
-			
-			
+
 		} catch (ParseException e) {
-			
+
 			printUsageAndExit(options);
 		}
-
-		
-
 
 	}
 
 	public static void main(String arg[]) {
-		SmallBatchSqlExecutor br;
+		App br;
 		try {
-			
+
 			parseCommandLine(arg);
-			switch (inputType){
-			case 2:
+			switch (inputType) {
+			case 1:
 				br = loadYamlConfig();
 				break;
 			default:
 				br = loadXMLConfig();
 				break;
 			}
-			
+
 			run(br);
-			
+
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (ParseException e) {
@@ -190,5 +190,5 @@ public class SmallBatchSqlExecutor {
 
 	static String filename = "";
 	static int inputType = 0;
-	
+
 }

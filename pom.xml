@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.probthink.smallbatchsqlexecutor</groupId>
 	<artifactId>small-batch-sql-executor</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<build>
 		<sourceDirectory>src</sourceDirectory>
 		<plugins>
@@ -21,7 +21,7 @@
 							<transformers>
 								<transformer
 									implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-									<mainClass>com.probthink.sqlexecutor.SmallBatchSqlExecutor</mainClass>
+									<mainClass>com.probthink.sqlexecutor.App</mainClass>
 								</transformer>
 							</transformers>
 						</configuration>
@@ -63,10 +63,12 @@
 			<version>1.1</version>
 		</dependency>
 		<dependency>
-			<groupId>org.yaml</groupId>
-			<artifactId>snakeyaml</artifactId>
-			<version>1.9</version>
+		  <groupId>org.yaml</groupId>
+		  <artifactId>snakeyaml</artifactId>
+		  <version>1.9</version>
 		</dependency>
+
+
 
 		<dependency>
 			<groupId>junit</groupId>

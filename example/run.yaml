@@ -1,0 +1,25 @@
+dbDriver: 
+  driverClassName: com.mysql.jdbc.Driver
+  driverUrl: file:///tmp/mysql-connector-java-5.1.33-bin.jar
+executor: !iterating_executor
+  dbConnStr: jdbc:mysql://localhost/test
+  dbPassword: ""
+  dbUserName: ""
+  queryIterator: !int_iterator
+    interval: 1
+    startId: 0
+    endId: 3
+    sql: |
+          select
+          date_number,
+          group_name, 
+          sum(val) as sum_val
+          from  example_table
+          where date_number >= ? and date_number< ?
+          group by group_name
+          
+  resultSetProcess: !delimited_processor 
+    delimiter: "\t" 
+    filename: example_result.txt
+    lineDelimiter: "\n"
+    quote: ''
