@@ -20,6 +20,6 @@ executor: !iterating_executor
           
   resultSetProcess: !delimited_processor 
     delimiter: "\t" 
-    filename: example_result.txt
+    filename: /tmp/example_result.txt
     lineDelimiter: "\n"
     quote: ''

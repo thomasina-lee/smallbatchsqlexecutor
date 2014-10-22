@@ -12,7 +12,7 @@ import com.probthink.sqlexecutor.IQueryIterator;
 import com.probthink.sqlexecutor.IResultSetProcess;
 
 
-public class LoopQueryExecutor implements IQueryExecutor {
+public class IteratingQueryExecutor implements IQueryExecutor {
 
 	private Connection getConnection() throws ClassNotFoundException,
 			SQLException {

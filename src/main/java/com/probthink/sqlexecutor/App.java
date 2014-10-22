@@ -18,7 +18,7 @@ import org.yaml.snakeyaml.constructor.Constructor;
 
 import com.probthink.sqlexecutor.DelimitedRecordSetProcessor;
 import com.probthink.sqlexecutor.DbDriver;
-import com.probthink.sqlexecutor.LoopQueryExecutor;
+import com.probthink.sqlexecutor.IteratingQueryExecutor;
 import com.probthink.sqlexecutor.SimpleIntRangeQueryIterator;
 import com.probthink.sqlexecutor.App;
 import com.thoughtworks.xstream.XStream;
@@ -40,7 +40,7 @@ public class App {
 		}
 
 		xs.alias("app", App.class);
-		xs.alias("iterating_executor", LoopQueryExecutor.class);
+		xs.alias("iterating_executor", IteratingQueryExecutor.class);
 		xs.alias("delimited_processor", DelimitedRecordSetProcessor.class);
 		xs.alias("int_iterator", SimpleIntRangeQueryIterator.class);
 		xs.alias("date_iterator", SimpleIntRangeQueryIterator.class);
@@ -58,10 +58,10 @@ public class App {
 		Constructor constructor = new Constructor(App.class);//Car.class is root
 
 		constructor.addTypeDescription(new TypeDescription(App.class, "!app"));
-		constructor.addTypeDescription(new TypeDescription(LoopQueryExecutor.class, "!iterating_executor"));
+		constructor.addTypeDescription(new TypeDescription(IteratingQueryExecutor.class, "!iterating_executor"));
 		constructor.addTypeDescription(new TypeDescription(SimpleIntRangeQueryIterator.class, "!int_iterator"));
 		constructor.addTypeDescription(new TypeDescription(SimpleDateRangeQueryIterator.class, "!date_iterator"));
-		constructor.addTypeDescription(new TypeDescription(NoLoopQueryExecutor.class, "!simple_executor"));
+		constructor.addTypeDescription(new TypeDescription(SimpleQueryExecutor.class, "!simple_executor"));
 		
 		
 		constructor.addTypeDescription(new TypeDescription(DelimitedRecordSetProcessor.class, "!delimited_processor"));
