@@ -10,15 +10,7 @@ with the aim to:
 * to have steady feedback of the progress of the query task
 
 
-## Compile
-The following command should compile the 
-```shell
-$ mvn package
-```
-and the 
-
-
-## To run an example
+## To Run an Example
 (assuming mysql and java installed, and database 'test' is free to be used)
 
 ```shell
@@ -27,6 +19,16 @@ $ mvn package
 $ mysql < example/example.sql
 $ java -jar target/small-batch-sql-executor-1.0.0.jar -y example/run.yaml 
 ```
+
+## Compile
+The following command should compile the 
+```shell
+$ mvn package
+```
+and the bundled jar will be found in `target/small-batch-sql-executor-1.0.0.jar`
+
+
+
 
 
 ## Example Configuration Content
