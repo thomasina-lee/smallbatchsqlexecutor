@@ -11,44 +11,22 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
+
+
 import org.yaml.snakeyaml.TypeDescription;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
-
 
 import com.probthink.sqlexecutor.DelimitedRecordSetProcessor;
 import com.probthink.sqlexecutor.DbDriver;
 import com.probthink.sqlexecutor.IteratingQueryExecutor;
 import com.probthink.sqlexecutor.SimpleIntRangeQueryIterator;
 import com.probthink.sqlexecutor.App;
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.json.JettisonMappedXmlDriver;
-import com.thoughtworks.xstream.io.xml.StaxDriver;
+
 
 public class App {
 
-	private static App loadXMLConfig()
-			throws FileNotFoundException {
-		XStream xs;
-		switch (inputType) {
-		case 1:
-			xs = new XStream(new StaxDriver());
-			break;
-		default:
-			xs = new XStream(new JettisonMappedXmlDriver());
-			break;
-		}
 
-		xs.alias("app", App.class);
-		xs.alias("iterating_executor", IteratingQueryExecutor.class);
-		xs.alias("delimited_processor", DelimitedRecordSetProcessor.class);
-		xs.alias("int_iterator", SimpleIntRangeQueryIterator.class);
-		xs.alias("date_iterator", SimpleIntRangeQueryIterator.class);
-		xs.alias("driver", DbDriver.class);
-		App br = (App) xs
-				.fromXML(new FileInputStream(filename));
-		return br;
-	}
 
 	
 	
@@ -94,7 +72,7 @@ public class App {
 
 	private static void printUsageAndExit(Options options) {
 		HelpFormatter formatter = new HelpFormatter();
-		formatter.printHelp("<this> ", options);
+		formatter.printHelp(" ", options);
 		Runtime.getRuntime().exit(-1);
 	}
 
@@ -104,11 +82,13 @@ public class App {
 		CommandLineParser parser = new PosixParser();
 		Options options = new Options();
 		options.addOption("h", "help", false, "print this message.");
-		options.addOption("x", "xml-file", true,
-				"set the xml config file to use");
-		options.addOption("y", "yaml-file", true,
-				"set the yaml config file to use");
+		options.addOption("y", "yaml-file", true, "specify yaml config file to run.");
 
+
+
+		
+		
+		
 		CommandLine cmdline;
 		try {
 			cmdline = parser.parse(options, args);
@@ -117,13 +97,9 @@ public class App {
 				printUsageAndExit(options);
 			}
 
-			if (cmdline.hasOption("x")) {
-				filename = cmdline.getOptionValue("xml-file");
-				inputType = 0;
-			} 
-			else if (cmdline.hasOption("y")) {
+			if (cmdline.hasOption("yaml-file")) {
 				filename = cmdline.getOptionValue("yaml-file");
-				inputType = 1;
+			
 			} else {
 				printUsageAndExit(options);
 			}
@@ -140,14 +116,7 @@ public class App {
 		try {
 
 			parseCommandLine(arg);
-			switch (inputType) {
-			case 1:
-				br = loadYamlConfig();
-				break;
-			default:
-				br = loadXMLConfig();
-				break;
-			}
+			br = loadYamlConfig();
 
 			run(br);
 
@@ -189,6 +158,6 @@ public class App {
 	IQueryExecutor executor;
 
 	static String filename = "";
-	static int inputType = 0;
+	
 
 }

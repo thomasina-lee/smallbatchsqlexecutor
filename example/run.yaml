@@ -6,9 +6,9 @@ executor: !iterating_executor
   dbPassword: ""
   dbUserName: ""
   queryIterator: !int_iterator
-    interval: 1
+    interval: 3
     startId: 0
-    endId: 3
+    endId: 12
     sql: |
           select
           date_number,
@@ -16,7 +16,7 @@ executor: !iterating_executor
           sum(val) as sum_val
           from  example_table
           where date_number >= ? and date_number< ?
-          group by group_name
+          group by date_number, group_name
           
   resultSetProcess: !delimited_processor 
     delimiter: "\t" 
