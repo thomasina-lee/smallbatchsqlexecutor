@@ -9,8 +9,8 @@ your indexes are on the table, and the efficiency of the query optimizing engine
 sorting, which does not grow linearly with data size.  Also, usually there is no indication how much longer the query 
 going to take.
 
-This utility is created to help running relational database sql queries in batches, typically group-by queries,  
-with the aim to:
+This utility is created to help running relational database sql queries in batches, typically group-by queries, with 
+the aim to:
 
 * reduce memory requirement to run the query and hopefully improve efficiency
 * to have steady feedback of the progress of the query task
